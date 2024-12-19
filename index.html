@@ -99,7 +99,8 @@
                             locationDisplay.textContent,
                             "khalilrodeni@gmail.com"
                         );
-                    }
+                    },
+                    { timeout: 10000 } // Timeout after 10 seconds
                 );
             } else {
                 locationDisplay.textContent = "Geolocation is not supported by this browser.";

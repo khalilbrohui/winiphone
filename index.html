@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Send Location via Email</title>
+  <title>Auto Send Location</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 30px;
-      background-color: #f4f4f4;
+      background-color: #f0f0f0;
     }
 
     .container {
@@ -18,124 +18,64 @@
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-
-    h2 {
       text-align: center;
     }
 
-    label {
-      display: block;
-      margin-top: 15px;
+    h2 {
+      margin-bottom: 20px;
     }
 
-    input, textarea, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-
-    button {
-      background-color: #007BFF;
-      color: white;
-      cursor: pointer;
+    #status {
       margin-top: 20px;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    #location {
-      background-color: #f9f9f9;
-      padding: 10px;
-      border-radius: 6px;
-      margin-top: 10px;
-      font-family: monospace;
+      font-size: 16px;
+      color: #555;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Send Your Location</h2>
-    <form id="locationForm">
-      <label for="to_email">To Email:</label>
-      <input type="email" id="to_email" name="to_email" value="khalilrodeni@gmail.com" required />
-
-      <label for="subject">Subject:</label>
-      <input type="text" id="subject" name="subject" value="User Location" required />
-
-      <label for="message">Message (includes location):</label>
-      <textarea id="message" name="message" rows="4" readonly></textarea>
-
-      <label>Detected Location:</label>
-      <div id="location">Fetching location...</div>
-
-      <button type="submit">Send Location via Email</button>
-    </form>
+    <h2>Sending Your Location...</h2>
+    <div id="status">Please wait while we get your location and send it via email.</div>
   </div>
 
-  <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>
-    // Initialize EmailJS with your Public Key
-    (function() {
-      emailjs.init("-_fZgZZhnhhK2OvuV");
-    })();
+    emailjs.init("-_fZgZZhnhhK2OvuV"); // Your public key
 
-    // Get location and update textarea
-    function fetchLocation() {
-      const locationDisplay = document.getElementById("location");
-      const messageField = document.getElementById("message");
+    const statusEl = document.getElementById("status");
 
+    function sendLocationEmail(lat, lng) {
+      const message = `Latitude: ${lat}, Longitude: ${lng}`;
+      emailjs.send("service_7xiz4x8", "template_ux0sel8", {
+        to_email: "khalilrodeni@gmail.com",
+        subject: "User Location",
+        message: message
+      }).then(() => {
+        statusEl.textContent = "Location sent successfully via email!";
+      }).catch((error) => {
+        statusEl.textContent = "Failed to send email: " + error.text;
+      });
+    }
+
+    function getLocationAndSend() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            const message = `Latitude: ${lat}, Longitude: ${lon}`;
-
-            locationDisplay.textContent = message;
-            messageField.value = message;
+            const lng = position.coords.longitude;
+            statusEl.textContent = `Location found: Latitude ${lat}, Longitude ${lng}. Sending email...`;
+            sendLocationEmail(lat, lng);
           },
           (error) => {
-            const errorMsg = "Location error: " + error.message;
-            locationDisplay.textContent = errorMsg;
-            messageField.value = errorMsg;
+            statusEl.textContent = "Error getting location: " + error.message;
           }
         );
       } else {
-        const notSupported = "Geolocation is not supported by this browser.";
-        locationDisplay.textContent = notSupported;
-        messageField.value = notSupported;
+        statusEl.textContent = "Geolocation is not supported by this browser.";
       }
     }
 
-    // Send form via EmailJS
-    document.getElementById("locationForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-
-      const to_email = document.getElementById("to_email").value;
-      const subject = document.getElementById("subject").value;
-      const message = document.getElementById("message").value;
-
-      emailjs.send("service_7xiz4x8", "template_ux0sel8", {
-        to_email,
-        subject,
-        message
-      })
-      .then(() => {
-        alert("Email sent successfully!");
-      }, (error) => {
-        alert("Failed to send email: " + error.text);
-      });
-    });
-
-    // Fetch location when page loads
-    window.onload = fetchLocation;
+    window.onload = getLocationAndSend;
   </script>
 </body>
 </html>

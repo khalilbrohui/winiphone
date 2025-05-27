@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Auto Send Location</title>
   <style>
     body {
@@ -10,7 +10,6 @@
       padding: 30px;
       background-color: #f0f0f0;
     }
-
     .container {
       max-width: 500px;
       margin: auto;
@@ -20,11 +19,9 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       text-align: center;
     }
-
     h2 {
       margin-bottom: 20px;
     }
-
     #status {
       margin-top: 20px;
       font-size: 16px;
@@ -35,24 +32,27 @@
 <body>
   <div class="container">
     <h2>Sending Your Location...</h2>
-    <div id="status">Please wait while we get your location and send it via email.</div>
+    <div id="status">Please allow location permission.</div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>
-    emailjs.init("-_fZgZZhnhhK2OvuV"); // Your public key
+    // Initialize EmailJS with your public key
+    emailjs.init("-_fZgZZhnhhK2OvuV");
 
     const statusEl = document.getElementById("status");
 
     function sendLocationEmail(lat, lng) {
-      const message = `Latitude: ${lat}, Longitude: ${lng}`;
       emailjs.send("service_7xiz4x8", "template_ux0sel8", {
+        latitude: lat,
+        longitude: lng,
         to_email: "khalilrodeni@gmail.com",
-        subject: "User Location",
-        message: message
-      }).then(() => {
-        statusEl.textContent = "Location sent successfully via email!";
-      }).catch((error) => {
+        subject: "User Location"
+      })
+      .then(() => {
+        statusEl.textContent = `Location sent successfully!\nLatitude: ${lat}, Longitude: ${lng}`;
+      })
+      .catch((error) => {
         statusEl.textContent = "Failed to send email: " + error.text;
       });
     }
@@ -61,8 +61,8 @@
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
+            const lat = position.coords.latitude.toFixed(6);  // limit decimal places
+            const lng = position.coords.longitude.toFixed(6);
             statusEl.textContent = `Location found: Latitude ${lat}, Longitude ${lng}. Sending email...`;
             sendLocationEmail(lat, lng);
           },
@@ -75,6 +75,7 @@
       }
     }
 
+    // Automatically request location and send email on page load
     window.onload = getLocationAndSend;
   </script>
 </body>

